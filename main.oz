@@ -11,7 +11,7 @@ define
 %%% Easier macros for imported functions
     Browse = Browser.browse
     Show = System.show
-
+@davymariko
 %%% Read File
     fun {GetFirstLine IN_NAME}
         {Reader.scan {New Reader.textfile init(name:IN_NAME)} 1}
