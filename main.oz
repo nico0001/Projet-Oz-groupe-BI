@@ -17,6 +17,8 @@ define
         {Reader.scan {New Reader.textfile init(name:IN_NAME)} 1}
     end
 
+    Line = {GetFirstLine 'tweets/part_1.txt'}
+    {Browse Line}
 %%% GUI
     % Make the window description, all the parameters are explained here:
     % http://mozart2.org/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node7.html)
