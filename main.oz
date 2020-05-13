@@ -5,20 +5,22 @@ import
     Application
     OS
     Browser
-
     Reader
+    Dictionnary
 define
 %%% Easier macros for imported functions
     Browse = Browser.browse
     Show = System.show
-@davymariko
+    Scan = Reader.scan
 %%% Read File
     fun {GetFirstLine IN_NAME}
-        {Reader.scan {New Reader.textfile init(name:IN_NAME)} 1}
+        {Scan {New Reader.textfile init(name:IN_NAME)} 1}
     end
 
-    Line = {GetFirstLine 'tweets/part_1.txt'}
-    {Browse Line}
+    fun {GetLine IN_NAME LINE}
+        {Scan {New Reader.textfile init(name:IN_NAME)} LINE}
+    end
+
 %%% GUI
     % Make the window description, all the parameters are explained here:
     % http://mozart2.org/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node7.html)
@@ -42,6 +44,4 @@ define
     {Text1 tk(insert 'end' {GetFirstLine "tweets/part_1.txt"})}
     {Text1 bind(event:"<Control-s>" action:Press)} % You can also bind events
 
-    {Show 'You can print in the terminal...'}
-    {Browse '... or use the browser window'}
 end
