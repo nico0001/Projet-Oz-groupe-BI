@@ -6,16 +6,19 @@ import
     OS
     Browser
     Reader
+    Parse
 define
 %%% Easier macros for imported functions
-    Browse = Browser.browse
+    %Browse = Browser.browse
+    BrowserObject = {New Browser.'class' init}
+    {BrowserObject option(buffer size:1000)} %Changer la taille du buffer
+    {BrowserObject option(representation strings:true)} %Affiche les strings
+    {BrowserObject option(representation strings:true)}
+    Browse = proc {$ X} {BrowserObject browse(X)} end
     Show = System.show
-    Scan = Reader.scan
     FullScan = Reader.fullscan
-%%% Read File
-    fun {GetLine IN_NAME LINE}
-        {Scan {New Reader.textfile init(name:IN_NAME)} LINE}
-    end
+    LinesToWord = Parse.linestoword
+
 %%% Création dictionary
     local Dic K V in
         Dic = {Dictionary.new}
@@ -27,12 +30,17 @@ define
 
 %%% Threads
     %Read
-    S1 = thread {FullScan {New Reader.textfile init(name:"tweets/part_1.txt")} 1} end
-    S2 = thread {FullScan {New Reader.textfile init(name:"tweets/part_2.txt")} 2} end
-    {Browse S1}
-    {Browse S2}
+    local S1 S2 W1 W2 in
+    thread S1 = {FullScan {New Reader.textfile init(name:"tweets/part_1.txt")} 1} end
+    thread S2 = {FullScan {New Reader.textfile init(name:"tweets/part_2.txt")} 2} end
+    %{Browse S1|S2}
+    %{Browse S2}
     %Parse
-    %thread {ForAll StreamFile Browse} end
+    thread W1 = {LinesToWord S1} end
+    thread W2 = {LinesToWord S2} end
+    %thread {ForAll S2 LineToWord} end
+    %{Browse W1}
+    end
 %%% GUI
     % Make the window description, all the parameters are explained here:
     % http://mozart2.org/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node7.html)
@@ -53,7 +61,7 @@ define
     W={QTk.build Description}
     {W show}
 
-    {Text1 tk(insert 'end' {GetLine "tweets/part_1.txt" 1})}
+    %{Text1 tk(insert 'end' {GetLine "tweets/part_1.txt" 1})}
     {Text1 bind(event:"<Control-s>" action:Press)} % You can also bind events
 
 end
