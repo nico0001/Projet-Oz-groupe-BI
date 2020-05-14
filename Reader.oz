@@ -11,7 +11,6 @@ define
     % @pre: - InFile: a TextFile from the file
     %       - N: the desires Nth line
     % @post: Returns the N-the line or 'none' in case it doesn't exist
-    
     fun {Scan InFile N}
         Line={InFile getS($)}
     in
@@ -28,17 +27,26 @@ define
         end
     end
 
-    %Fetches all the line in a file
+    %Fetches all the line in a file in a stream format
     % @pre: - InFile: a TextFile from the file
-    % @post: Returns a stream containing the lines : Line1|Line2|...|Line100|nil
-    fun {FullScan InFile}
+    %       - N : Determine the pair or impair files
+    % @post: Returns a stream containing the lines of pair or impair files: Line1|Line3|...|Line99|nil
+    fun {FullScan InFile N}
         Line={InFile getS($)}
     in
         if Line==false then
             {InFile close}
-            nil
+            if N==100 then
+                nil
+            else 
+                if N==99 then
+                    nil
+                else
+                    {FullScan {New TextFile init(name:"tweets/part_"#N+2#".txt")} N+2}
+                end
+            end
         else
-            Line|{FullScan InFile}
+            Line|{FullScan InFile N}
         end
     end
 

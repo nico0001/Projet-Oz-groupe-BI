@@ -16,10 +16,7 @@ define
     fun {GetLine IN_NAME LINE}
         {Scan {New Reader.textfile init(name:IN_NAME)} LINE}
     end
-
-    S = {FullScan {New Reader.textfile init(name:"tweets/part_1.txt")}}
-    {Browse S}
-%création dictionary
+%%% Création dictionary
     local Dic K V in
         Dic = {Dictionary.new}
         K = "bonjour"
@@ -28,6 +25,14 @@ define
         {Browse {Dictionary.get Dic {String.toAtom K}}}
     end
 
+%%% Threads
+    %Read
+    S1 = thread {FullScan {New Reader.textfile init(name:"tweets/part_1.txt")} 1} end
+    S2 = thread {FullScan {New Reader.textfile init(name:"tweets/part_2.txt")} 2} end
+    {Browse S1}
+    {Browse S2}
+    %Parse
+    %thread {ForAll StreamFile Browse} end
 %%% GUI
     % Make the window description, all the parameters are explained here:
     % http://mozart2.org/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node7.html)
