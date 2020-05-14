@@ -6,19 +6,26 @@ import
     OS
     Browser
     Reader
-    Dictionnary
 define
 %%% Easier macros for imported functions
     Browse = Browser.browse
     Show = System.show
     Scan = Reader.scan
 %%% Read File
-    fun {GetFirstLine IN_NAME}
-        {Scan {New Reader.textfile init(name:IN_NAME)} 1}
-    end
-
     fun {GetLine IN_NAME LINE}
         {Scan {New Reader.textfile init(name:IN_NAME)} LINE}
+    end
+
+    fun {GetWord LINE INDEX}
+        {LINE.}
+
+%création dictionary
+    local Dic K V in
+        Dic = {Dictionary.new}
+        K = "bonjour"
+        V = "Jésus"
+        {Dictionary.put Dic {String.toAtom K} {String.toAtom V}}
+        {Browse {Dictionary.get Dic {String.toAtom K}}}
     end
 
 %%% GUI
