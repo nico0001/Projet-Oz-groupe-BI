@@ -11,14 +11,14 @@ define
     Browse = Browser.browse
     Show = System.show
     Scan = Reader.scan
+    FullScan = Reader.fullscan
 %%% Read File
     fun {GetLine IN_NAME LINE}
         {Scan {New Reader.textfile init(name:IN_NAME)} LINE}
     end
 
-    fun {GetWord LINE INDEX}
-        {LINE.}
-
+    S = {FullScan {New Reader.textfile init(name:"tweets/part_1.txt")}}
+    {Browse S}
 %création dictionary
     local Dic K V in
         Dic = {Dictionary.new}
@@ -48,7 +48,7 @@ define
     W={QTk.build Description}
     {W show}
 
-    {Text1 tk(insert 'end' {GetFirstLine "tweets/part_1.txt"})}
+    {Text1 tk(insert 'end' {GetLine "tweets/part_1.txt" 1})}
     {Text1 bind(event:"<Control-s>" action:Press)} % You can also bind events
 
 end
