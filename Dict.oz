@@ -14,15 +14,24 @@ define
     StA = String.toAtom
 %%% Création dictionary
     proc {DicFreq D Words}
-        case Words
-        of nil then skip
-        [] H|T then DNext in
-            DNext = {Dictionary.condGet D {StA H.1} {Dictionary.new}}
-            {Dictionary.put DNext {StA H.2} {Dictionary.condGet DNext {StA H.2} 0}+1}
-            {Dictionary.put D {StA H.1} DNext}
-            {Browser.browse {Dictionary.keys D}}
-            %{System.show {Dictionary.entries {Dictionary.condGet D {StA "a"} {Dictionary.new}}}}
+        case Words of H|T then
+            if H==nil then skip
+            else
+                local DNext in
+                    DNext = {Dictionary.condGet D {StA H.1} {Dictionary.new}}
+                    if {Dictionary.isEmpty DNext} then
+                        {Dictionary.put D {StA H.1} DNext}
+                        {Dictionary.put DNext {StA H.2} 1}
+                        %{Browse {Dictionary.keys D}}
+                    else
+                    {Dictionary.put DNext {StA H.2} {Dictionary.condGet DNext {StA H.2} 0}+1}
+                    %{Browser.browse {Dictionary.keys D}}
+                    %{Browse {Dictionary.entries {Dictionary.condGet D {StA "a"} {Dictionary.new}}}}
+                    end
+                end
+            {System.show {List.length T}}
             {DicFreq D T}
+            end
         end
     end
 

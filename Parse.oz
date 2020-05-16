@@ -51,8 +51,7 @@ define
 
     proc {WordLinkTweet Words P}
         case Words
-        of nil then {Port.send P nil}
-        [] H|T then
+        of H|T then
             if T==nil then
                 skip
             else if T.1==nil then %Si le mot==nil à cause de plusieurs espaces (32) on passe.

@@ -32,18 +32,21 @@ define
     %Parsing
     thread Words1 = {TweetsToWord Lines1} end
     thread Words2 = {TweetsToWord Lines2} end
-    %{Browse Words1|Words2}
+    %{Browse Words1.1}
     %{Browse Words1}
     P = {Port.new S1}
-    thread {WordLink Words1 P} end
-    thread {WordLink Words2 P} end
-    %{Browse S1}
+    thread {WordLink Words1 P} X1=1 end
+    thread {WordLink Words2 P} X2=X1 end
+    {Wait X2}
+    {Port.send P nil}
+    {Browse S1}
     DDFreq = {Dictionary.new}
     thread {DicFreq DDFreq S1} X=1 end
     {Wait X}
+    {Browse "fini"}
     DFinal = {Dictionary.new}
-    {FinalDictionary DFinal DDFreq {Dictionary.keys DDFreq}}
-    {Browse {Dictionary.entries DFinal}}
+    %{FinalDictionary DFinal DDFreq {Dictionary.keys DDFreq}}
+    %{Browse {Dictionary.entries DFinal}}
     end
 
 
