@@ -14,23 +14,24 @@ define
     StA = String.toAtom
 %%% Création dictionary
     proc {DicFreq D Words}
-        case Words of H|T then
-            if H==nil then skip
+        case Words
+        of H|T then DNext in
+            if H==nil then
+                {System.show 'NIIIIL'}
+                {System.show T}
+                skip
             else
-                local DNext in
-                    DNext = {Dictionary.condGet D {StA H.1} {Dictionary.new}}
-                    if {Dictionary.isEmpty DNext} then
-                        {Dictionary.put D {StA H.1} DNext}
-                        {Dictionary.put DNext {StA H.2} 1}
-                        %{Browse {Dictionary.keys D}}
-                    else
+                DNext = {Dictionary.condGet D {StA H.1} {Dictionary.new}}
+                if {Dictionary.isEmpty DNext} then
+                    {Dictionary.put D {StA H.1} DNext}
+                    {Dictionary.put DNext {StA H.2} 1}
+                    %{Browse {Dictionary.keys D}}
+                else
                     {Dictionary.put DNext {StA H.2} {Dictionary.condGet DNext {StA H.2} 0}+1}
                     %{Browser.browse {Dictionary.keys D}}
                     %{Browse {Dictionary.entries {Dictionary.condGet D {StA "a"} {Dictionary.new}}}}
-                    end
                 end
-            {System.show {List.length T}}
-            {DicFreq D T}
+                {DicFreq D T}
             end
         end
     end
@@ -41,18 +42,18 @@ define
         [] Word|T then DNext NextWords in
             {Dictionary.get DFreq Word DNext}
             {Dictionary.keys DNext NextWords}
-            {FindMaxFreq DFinal Word DNext NextWords 0#0}
+            {FindMaxFreq DFinal Word DNext NextWords {Cell.new 0#0}}
             {FinalDictionary DFinal DFreq T}
         end
     end
 
     proc {FindMaxFreq DFinal Word DNext NextWords Max}
         case NextWords
-        of nil then {Dictionary.put DFinal Word Max.1}
+        of nil then {Dictionary.put DFinal Word {Cell.access Max}.1}
         [] H|T then Freq in
             Freq = {Dictionary.get DNext H}
-            if Freq>Max.2 then
-                Max=H#Freq
+            if Freq>{Cell.access Max}.2 then
+                {Cell.assign Max H#Freq}
                 {FindMaxFreq DFinal Word DNext T Max}
             else
                 {FindMaxFreq DFinal Word DNext T Max}

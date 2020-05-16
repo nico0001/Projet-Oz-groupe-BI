@@ -21,9 +21,10 @@ define
     WordLink = Parse.wordlink
     DicFreq = Dict.dicfreq
     FinalDictionary = Dict.finaldictionary
+    StA = String.toAtom
 
 %%% Threads
-    local Lines1 Lines2 Words1 Words2 P S1 DDFreq DFinal X X1 X2 in
+    local Lines1 Lines2 Words1 Words2 P S1 DDFreq X1 X2 in
     %Read
     thread Lines1 = {FullScanCall 1} end
     thread Lines2 = {FullScanCall 2} end
@@ -38,16 +39,22 @@ define
     thread {WordLink Words1 P} X1=1 end
     thread {WordLink Words2 P} X2=X1 end
     {Wait X2}
+    {Show 'fini'}
+    {Wait S1}
+    {Show 'fini2'}
     {Port.send P nil}
-    {Browse S1}
+    %{Browse S1}
     DDFreq = {Dictionary.new}
-    thread {DicFreq DDFreq S1} X=1 end
-    {Wait X}
-    {Browse "fini"}
+    {DicFreq DDFreq S1}
+    %{Show {Dictionary.entries DDFreq}}
     DFinal = {Dictionary.new}
-    %{FinalDictionary DFinal DDFreq {Dictionary.keys DDFreq}}
-    %{Browse {Dictionary.entries DFinal}}
+    {FinalDictionary DFinal DDFreq {Dictionary.keys DDFreq}}
+    {Browse {Dictionary.entries DFinal}}
     end
+
+fun{Find W}
+    {Dictionary.condGet DFinal {StA W} {StA "Fristi"}}
+end
 
 
 %%% GUI
@@ -62,9 +69,11 @@ define
         text(handle:Text2 width:28 height:5 background:black foreground:white glue:w wrap:word)
         action:proc{$}{Application.exit 0} end % quit app gracefully on window closing
     )
-    proc {Press} Inserted in
+    
+    proc {Press} Inserted Word in
         Inserted = {Text1 getText(p(1 0) 'end' $)} % example using coordinates to get text
-        {Text2 set(1:Inserted)} % you can get/set text this way too
+        Word = {Find {List.subtract {List.last Inserted} 10}}
+        {Text2 set(1:({VirtualString.toString Inserted#" "#Word}))} % you can get/set text this way too
     end
     % Build the layout from the description
     W={QTk.build Description}
