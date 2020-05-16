@@ -46,6 +46,9 @@ define
         [] H|T then
             {WordLinkTweet H P}
             {WordLink T P}
+        else
+            {System.show '@@@@@@@@@@@@@@@@@@@@@@@@@@@@'}
+            {System.show StreamWords}
         end
     end
 
@@ -63,6 +66,8 @@ define
                     {WordLinkTweet T P}
                 end
             end
+        [] nil then
+            skip
         end
     end
 

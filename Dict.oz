@@ -17,8 +17,6 @@ define
         case Words
         of H|T then DNext in
             if H==nil then
-                {System.show 'NIIIIL'}
-                {System.show T}
                 skip
             else
                 DNext = {Dictionary.condGet D {StA H.1} {Dictionary.new}}

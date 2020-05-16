@@ -24,44 +24,39 @@ define
     StA = String.toAtom
 
 %%% Threads
-    local Lines1 Lines2 Words1 Words2 P S1 DDFreq X1 X2 in
-    %Read
-    thread Lines1 = {FullScanCall 1} end
-    thread Lines2 = {FullScanCall 2} end
-    %{Browse Lines1|Lines2}
-    %{Browse Lines1}
-    %Parsing
-    thread Words1 = {TweetsToWord Lines1} end
-    thread Words2 = {TweetsToWord Lines2} end
-    %{Browse Words1.1}
-    %{Browse Words1}
-    P = {Port.new S1}
-    thread {WordLink Words1 P} X1=1 end
-    thread {WordLink Words2 P} X2=X1 end
-    {Wait X2}
-    {Show 'fini'}
-    {Wait S1}
-    {Show 'fini2'}
-    {Port.send P nil}
-    %{Browse S1}
-    DDFreq = {Dictionary.new}
-    {DicFreq DDFreq S1}
-    %{Show {Dictionary.entries DDFreq}}
-    DFinal = {Dictionary.new}
-    {FinalDictionary DFinal DDFreq {Dictionary.keys DDFreq}}
-    {Browse {Dictionary.entries DFinal}}
+    local Lines1 Lines2 Words1 Words2 P S1 DDFreq Kamel Wali X1 X2 in
+        %Read
+        thread Lines1 = {FullScanCall 1} end
+        thread Lines2 = {FullScanCall 2} end
+        %Parsing
+        thread Words1 = {TweetsToWord Lines1} end
+        thread Words2 = {TweetsToWord Lines2} end
+        P = {Port.new S1}
+        
+        thread {WordLink Words1 P} Wali=1 end
+        thread {WordLink Words2 P} Kamel=Wali end
+        {Wait Kamel} 
+        {Port.send P nil}
+        DDFreq = {Dictionary.new}
+        thread {DicFreq DDFreq S1} X1=1 end
+        %{Show {Dictionary.entries DDFreq}}
+        DFinal = {Dictionary.new}
+        {Wait X1}
+        thread {FinalDictionary DFinal DDFreq {Dictionary.keys DDFreq}} X2=1 end
+        {Wait X2}
+        %{Browse {Dictionary.entries DFinal}}
     end
 
-fun{Find W}
-    {Dictionary.condGet DFinal {StA W} {StA "Fristi"}}
-end
+    fun{Find W}
+        {Dictionary.condGet DFinal {StA W} {StA "Fristi"}}
+    end
 
 
 %%% GUI
     % Make the window description, all the parameters are explained here:
     % http://mozart2.org/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node7.html)
     Text1 Text2 Description=td(
-        title: "Frequency count"
+        title: "Automatic input 1 gram"
         lr(
             text(handle:Text1 width:28 height:5 background:white foreground:black wrap:word)
             button(text:"Change" action:Press)
@@ -70,10 +65,11 @@ end
         action:proc{$}{Application.exit 0} end % quit app gracefully on window closing
     )
     
-    proc {Press} Inserted Word in
+    proc {Press} Inserted Word Line in
         Inserted = {Text1 getText(p(1 0) 'end' $)} % example using coordinates to get text
-        Word = {Find {List.subtract {List.last Inserted} 10}}
-        {Text2 set(1:({VirtualString.toString Inserted#" "#Word}))} % you can get/set text this way too
+        Word = {Find {List.subtract {List.last {String.tokens Inserted 32}} 10}}
+        Line = {VirtualString.toString {List.subtract Inserted 10}#" "#Word}
+        {Text2 set(1:(Line))} % you can get/set text this way too
     end
     % Build the layout from the description
     W={QTk.build Description}
@@ -81,5 +77,4 @@ end
 
     %{Text1 tk(insert 'end' {GetLine "tweets/part_1.txt" 1})}
     {Text1 bind(event:"<Control-s>" action:Press)} % You can also bind events
-
 end

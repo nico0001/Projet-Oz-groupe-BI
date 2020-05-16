@@ -20,7 +20,7 @@ define
     in
         if Line==false then
             {InFile close}
-            try {FullScan {New TextFile init(name:"tweets/part_"#N+1000#".txt")} N+1000}
+            try {FullScan {New TextFile init(name:"tweets/part_"#N+2#".txt")} N+2}
             catch ErrorDirectory then nil
             end
         else
