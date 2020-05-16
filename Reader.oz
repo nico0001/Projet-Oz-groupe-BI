@@ -3,9 +3,13 @@ import
     Open
 export
     textfile:TextFile
-    fullscan:FullScan
+    fullscancall:FullScanCall
 
 define
+
+    fun {FullScanCall N}
+        {FullScan {New TextFile init(name:"tweets/part_"#N#".txt")} N}
+    end
 
     %Fetches all the line in a file in a stream format
     % @pre: - InFile: a TextFile from the file
@@ -16,7 +20,7 @@ define
     in
         if Line==false then
             {InFile close}
-            try {FullScan {New TextFile init(name:"tweets/part_"#N+2#".txt")} N+2}
+            try {FullScan {New TextFile init(name:"tweets/part_"#N+50#".txt")} N+50}
             catch ErrorDirectory then nil
             end
         else

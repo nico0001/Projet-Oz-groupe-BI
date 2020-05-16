@@ -7,40 +7,46 @@ import
     Browser
     Reader
     Parse
+    Dict
 define
 %%% Easier macros for imported functions
     %Browse = Browser.browse
     BrowserObject = {New Browser.'class' init}
     {BrowserObject option(buffer size:1000)} %Changer la taille du buffer
     {BrowserObject option(representation strings:true)} %Affiche les strings
-    {BrowserObject option(representation strings:true)}
     Browse = proc {$ X} {BrowserObject browse(X)} end
     Show = System.show
-    FullScan = Reader.fullscan
-    LinesToWord = Parse.linestoword
-
-%%% Création dictionary
-    local Dic K V in
-        Dic = {Dictionary.new}
-        K = "bonjour"
-        V = "Jésus"
-        {Dictionary.put Dic {String.toAtom K} {String.toAtom V}}
-        {Browse {Dictionary.get Dic {String.toAtom K}}}
-    end
+    FullScanCall = Reader.fullscancall
+    TweetsToWord = Parse.tweetstoword
+    WordLink = Parse.wordlink
+    DicFreq = Dict.dicfreq
+    FinalDictionary = Dict.finaldictionary
 
 %%% Threads
+    local Lines1 Lines2 Words1 Words2 P S1 DDFreq DFinal X X1 X2 in
     %Read
-    local S1 S2 W1 W2 in
-    thread S1 = {FullScan {New Reader.textfile init(name:"tweets/part_1.txt")} 1} end
-    thread S2 = {FullScan {New Reader.textfile init(name:"tweets/part_2.txt")} 2} end
-    %{Browse S1|S2}
-    %{Browse S2}
-    %Parse
-    thread W1 = {LinesToWord S1} end
-    thread W2 = {LinesToWord S2} end
-    %thread {ForAll S2 LineToWord} end
-    %{Browse W1}
+    thread Lines1 = {FullScanCall 1} end
+    thread Lines2 = {FullScanCall 2} end
+    %{Browse Lines1|Lines2}
+    %{Browse Lines1}
+    %Parsing
+    thread Words1 = {TweetsToWord Lines1} end
+    thread Words2 = {TweetsToWord Lines2} end
+    %{Browse Words1|Words2}
+    %{Browse Words1}
+    P = {Port.new S1}
+    thread {WordLink Words1 P} end
+    thread {WordLink Words2 P} end
+    %{Browse S1}
+    DDFreq = {Dictionary.new}
+    thread {DicFreq DDFreq S1} X=1 end
+    {Wait X}
+    DFinal = {Dictionary.new}
+    {FinalDictionary DFinal DDFreq {Dictionary.keys DDFreq}}
+    {Browse {Dictionary.entries DFinal}}
     end
+
+
 %%% GUI
     % Make the window description, all the parameters are explained here:
     % http://mozart2.org/mozart-v1/doc-1.4.0/mozart-stdlib/wp/qtk/html/node7.html)
