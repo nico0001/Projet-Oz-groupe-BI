@@ -20,7 +20,7 @@ define
                 skip
             else
                 DNext = {Dictionary.condGet D {StA H.1} {Dictionary.new}}
-                if {Dictionary.isEmpty DNext} then
+                if {Dictionary.isEmpty DNext} then %Si le mot n'est pas encore dans le dictionnaire
                     {Dictionary.put D {StA H.1} DNext}
                     {Dictionary.put DNext {StA H.2} 1}
                     %{Browse {Dictionary.keys D}}
@@ -34,28 +34,26 @@ define
         end
     end
 
-    proc {FinalDictionary DFinal DFreq LstWord}
+    proc {FinalDictionary D LstWord}
         case LstWord
         of nil then skip
         [] Word|T then DNext NextWords in
-            {Dictionary.get DFreq Word DNext}
+            {Dictionary.get D Word DNext}
             {Dictionary.keys DNext NextWords}
-            {FindMaxFreq DFinal Word DNext NextWords {Cell.new 0#0}}
-            {FinalDictionary DFinal DFreq T}
+            {FindMaxFreq D Word DNext NextWords {Cell.new none#0}}
+            {FinalDictionary D T}
         end
     end
 
-    proc {FindMaxFreq DFinal Word DNext NextWords Max}
+    proc {FindMaxFreq D Word DNext NextWords Max}
         case NextWords
-        of nil then {Dictionary.put DFinal Word {Cell.access Max}.1}
+        of nil then {Dictionary.put D Word {Cell.access Max}.1}
         [] H|T then Freq in
             Freq = {Dictionary.get DNext H}
             if Freq>{Cell.access Max}.2 then
                 {Cell.assign Max H#Freq}
-                {FindMaxFreq DFinal Word DNext T Max}
-            else
-                {FindMaxFreq DFinal Word DNext T Max}
             end
+        {FindMaxFreq D Word DNext T Max}
         end
     end
 
