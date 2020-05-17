@@ -1,22 +1,22 @@
 functor
 export
-    tweetstoword:TweetsToWord
-    wordlink:WordLink
-    
+    parsetweets:ParseTweets
+    wordslink:WordsLink
+
 define
 
-    %Fetches all the words off all tweets
+    %Organize the call of TweetToListOfWord by tweet
     % @pre: - FileLines: a stream of tweets in a string format
     % @post: Returns a stream of streams containing the words of one tweet
-    fun {TweetsToWord FileLines}
+    fun {ParseTweets FileLines}
         case FileLines
         of nil then nil
         [] H|T then
-            {TweetToListOfWord H}|{TweetsToWord T}
+            {TweetToListOfWord H}|{ParseTweets T}
         end
     end
 
-    %Fetches all the words of one tweet
+    %Parses all the words of one tweet
     % @pre: - Words: a tweet/line in a string format
     % @post: Returns a stream containing the words of the tweet/line
     fun {TweetToListOfWord Words}
@@ -36,13 +36,13 @@ define
     % @pre: - StreamWords: a stream of stream of words of one tweet
     %       - P1 : Key port access to a stream S1
     %       - P2 : Key port access to a stream S2
-    % @post: Send to the streams S1 and S2 tuples of the word and his next word for all tweets
-    proc {WordLink StreamWords P1 P2}
+    % @post: Send to the streams S1 and S2 tuples of the word(s) and his/their next word for all tweets
+    proc {WordsLink StreamWords P1 P2}
         case StreamWords
         of nil then skip
         [] H|T then
-            {WordLinkTweet H P1 P2}
-            {WordLink T P1 P2}
+            {WordsLinkTweet H P1 P2}
+            {WordsLink T P1 P2}
         end
     end
 
@@ -51,7 +51,7 @@ define
     %       - P1 : Key port access to a stream S1
     %       - P2 : Key port access to a stream S2
     % @post: Send to the streams S1 and S2 tuples of the word(s) and his next word for one tweet
-    proc {WordLinkTweet Words P1 P2}
+    proc {WordsLinkTweet Words P1 P2}
         case Words
         of H|T then
             if T==nil then
@@ -62,7 +62,7 @@ define
                 else 
                     {Port.send P2 {VirtualString.toString H#T.1}#T.2.1} %2-gram
                 end
-                {WordLinkTweet T P1 P2}
+                {WordsLinkTweet T P1 P2}
             end
         end
     end

@@ -17,9 +17,9 @@ define
     {BrowserObject option(representation strings:true)} %Affiche les strings
     Browse = proc {$ X} {BrowserObject browse(X)} end
     Show = System.show
-    FullScanCall = Reader.fullscancall
-    TweetsToWord = Parse.tweetstoword
-    WordLink = Parse.wordlink
+    ReadTweets = Reader.readtweets
+    ParseTweets = Parse.parsetweets
+    WordsLink = Parse.wordslink
     DicFreq = Dict.dicfreq
     FinalDictionary = Dict.finaldictionary
     StA = String.toAtom
@@ -28,23 +28,23 @@ define
 %%% Threads
     local Lines1 L2 L3 L4 Words1 W2 W3 W4 P1 P2 S1 S2 A1 A2 A3 A4 X1 X2 in
         %Read
-        thread Lines1 = {FullScanCall 1} end
-        thread L2 = {FullScanCall 2} end
-        thread L3 = {FullScanCall 3} end
-        thread L4 = {FullScanCall 4} end
+        thread Lines1 = {ReadTweets 1} end
+        thread L2 = {ReadTweets 2} end
+        thread L3 = {ReadTweets 3} end
+        thread L4 = {ReadTweets 4} end
         %Parsing1
-        thread Words1 = {TweetsToWord Lines1} end
-        thread W2 = {TweetsToWord L2} end
-        thread W3 = {TweetsToWord L3} end
-        thread W4 = {TweetsToWord L4} end
+        thread Words1 = {ParseTweets Lines1} end
+        thread W2 = {ParseTweets L2} end
+        thread W3 = {ParseTweets L3} end
+        thread W4 = {ParseTweets L4} end
         
         P1 = {Port.new S1} %Port du 1-gram
         P2 = {Port.new S2} %Port du 2-gram
         %Parsing2      
-        thread {WordLink Words1 P1 P2} A1=1 end
-        thread {WordLink W2 P1 P2} A2=A1 end
-        thread {WordLink W3 P1 P2} A3=A2 end
-        thread {WordLink W4 P1 P2} A4=A3 end
+        thread {WordsLink Words1 P1 P2} A1=1 end
+        thread {WordsLink W2 P1 P2} A2=A1 end
+        thread {WordsLink W3 P1 P2} A3=A2 end
+        thread {WordsLink W4 P1 P2} A4=A3 end
         {Wait A4}
 
         {Port.send P1 nil}
@@ -83,7 +83,7 @@ define
         action:proc{$}{Application.exit 0} end % quit app gracefully on window closing
     )
     
-    %Suggest a word depending on what the user writes
+    %Suggests a word depending on what the user writes
     proc {Suggest} Inserted NextWord ReversedI ILen Line in
         Inserted = {List.subtract {Text1 getText(p(1 0) 'end' $)} 10}
                 
@@ -102,7 +102,7 @@ define
         {Text2 set(1:(Line))}
     end
 
-    %Write the next word if there is one
+    %Writes the next word if there is one
     proc {Write} Inserted NextWord in
         Inserted = {List.subtract {Text1 getText(p(1 0) 'end' $)} 10}
         NextWord = {List.subtract {Text2 getText(p(1 0) 'end' $)} 10}

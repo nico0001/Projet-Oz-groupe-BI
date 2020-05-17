@@ -6,6 +6,7 @@ export
 define
     StA = String.toAtom
 
+    %Create a dictionary of frequency
     % @pre: - D: a empty dictionary
     %       - Words: Stream of tuples of a word(s) and his/their next one
     % @post: D has all the words as keys and has a dictionary (DNext) for each word as

@@ -3,16 +3,16 @@ import
     Open
 export
     textfile:TextFile
-    fullscancall:FullScanCall
+    readtweets:ReadTweets
 
 define
 
-    %Call the FullScan fucntion while opening the first file depending on N
-    fun {FullScanCall N}
+    %Calls the FullScan fucntion while opening the first file depending on N
+    fun {ReadTweets N}
         {FullScan {New TextFile init(name:"tweets/part_"#N#".txt")} N}
     end
 
-    %Fetches all the line in a file in a stream format
+    %Fetches all the tweets in a file in a stream format
     % @pre: - InFile: a TextFile from the file
     %       - N : Determine what files are gonna be worked
     % @post: Returns a stream containing the lines (Line) of all N+4 files.
