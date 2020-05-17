@@ -3,7 +3,6 @@ import
     QTk at 'x-oz://system/wp/QTk.ozf'
     System
     Application
-    OS
     Browser
     Reader
     Parse
@@ -13,8 +12,8 @@ define
 %%% Easier macros for imported functions
     %Browse = Browser.browse
     BrowserObject = {New Browser.'class' init}
-    {BrowserObject option(buffer size:1000)} %Changer la taille du buffer
-    {BrowserObject option(representation strings:true)} %Affiche les strings
+    {BrowserObject option(buffer size:1000)} %Change the size of the buffer
+    {BrowserObject option(representation strings:true)} %String format enabled
     Browse = proc {$ X} {BrowserObject browse(X)} end
     Show = System.show
     ReadTweets = Reader.readtweets
@@ -76,7 +75,7 @@ define
         title: "Saisie automatique 2-gram et 1-gram"
         lr(
             text(handle:Text1 width:56 height:10 background:white foreground:black wrap:word)
-            button(text:"Propose" action:Suggest)
+            button(text:"Suggest" action:Suggest)
             button(text:"Write next word" action:Write)
         )
         text(handle:Text2 width:56 height:5 background:black foreground:white glue:w wrap:word)
