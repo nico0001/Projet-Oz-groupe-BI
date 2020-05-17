@@ -51,7 +51,7 @@ define
         {Port.send P1 nil}
         {Port.send P2 nil}
 
-        %Création des dictionnaires
+        %Making of the dictionaires
         D1 = {Dictionary.new} %1-gram
         D2 = {Dictionary.new} %2-gram
         thread {DicFreq D1 S1} {FinalDictionary D1 {Dictionary.keys D1}} X1=1 end
@@ -60,7 +60,14 @@ define
     end
 
 
-    
+    %Return the next word depending on the 2 last words
+    % @pre: -W1: the last word written
+    %       -W2: the one before the last
+    % @post: Return the next word or "Aucune proposition" 
+    fun{FindNext W1 W2}
+        {Dictionary.condGet D2 {StA {VStS W2#W1}}
+        {Dictionary.condGet D1 {StA W1} {StA "Aucune proposition"}}}
+    end
 
 
 %%% GUI

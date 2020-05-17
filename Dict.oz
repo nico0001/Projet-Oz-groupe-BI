@@ -63,13 +63,4 @@ define
         end
     end
 
-    %Return the next word depending on the 2 last words
-    % @pre: -W1: the last word written
-    %       -W2: the one before the last
-    % @post: Return the next word or "Aucune proposition" 
-    fun{FindNext W1 W2}
-        {Dictionary.condGet D2 {StA {VStS W2#W1}}
-        {Dictionary.condGet D1 {StA W1} {StA "Aucune proposition"}}}
-    end
-
 end
