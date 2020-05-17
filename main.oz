@@ -78,7 +78,7 @@ define
             button(text:"Suggest" action:Suggest)
             button(text:"Write next word" action:Write)
         )
-        text(handle:Text2 width:56 height:5 background:black foreground:white glue:w wrap:word)
+        text(handle:Text2 width:56 height:5 background:c(69 154 181) foreground:black glue:w wrap:word)
         action:proc{$}{Application.exit 0} end % quit app gracefully on window closing
     )
     

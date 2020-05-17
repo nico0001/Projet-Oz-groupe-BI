@@ -36,30 +36,27 @@ define
     proc {FinalDictionary D LstWord}
         case LstWord
         of nil then skip
-        [] Word|T then DNext NextWords in
-            {Dictionary.get D Word DNext}
-            {Dictionary.keys DNext NextWords}
-            {FindMaxFreq D Word DNext NextWords {Cell.new none#0}}
+        [] Word|T then NextWords in
+            {Dictionary.keys {Dictionary.get D Word} NextWords}
+            {FindMaxFreq D Word NextWords {Cell.new none#0}}
             {FinalDictionary D T}
         end
     end
 
     %Finds the word with the biggest frequency
     % @pre: -D: the dictionary of dictionaries of frequency
-    %       -Word: the word(s) for whom we are finding his/their best next one
-    %       -DNext: the dictionary of frequency
-    %       -NextWords: Possible words to treat
+    %       -Word: the word(s) for whom we are finding his/their best next one    %       -NextWords: Possible words to treat
     %       -Max: Tuple Word#frequency initialized to none#0
     % @post: D has now the best next word as value for the key Word
-    proc {FindMaxFreq D Word DNext NextWords Max}
+    proc {FindMaxFreq D Word NextWords Max}
         case NextWords
         of nil then {Dictionary.put D Word {Cell.access Max}.1}
         [] H|T then Freq in
-            Freq = {Dictionary.get DNext H}
+            Freq = {Dictionary.get {Dictionary.get D Word} H}
             if Freq>{Cell.access Max}.2 then
                 {Cell.assign Max H#Freq}
             end
-        {FindMaxFreq D Word DNext T Max}
+        {FindMaxFreq D Word T Max}
         end
     end
 
