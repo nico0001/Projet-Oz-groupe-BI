@@ -15,7 +15,7 @@ define
     %Fetches all the line in a file in a stream format
     % @pre: - InFile: a TextFile from the file
     %       - N : Determine what files are gonna be worked
-    % @post: Returns a stream containing the lines of all N+4 files.
+    % @post: Returns a stream containing the lines (Line) of all N+4 files.
     fun {FullScan InFile N}
         Line={InFile getS($)}
     in
