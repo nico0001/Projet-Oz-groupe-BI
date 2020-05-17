@@ -27,8 +27,6 @@ define
             if Word==nil then %Si le mot==nil à cause de plusieurs espaces (32) on ne retourne pas le mot.
                 {TweetToListOfWord OtherWords}
             else
-                {List.substract Word {String.toAtom "#"}}
-                {Browser.browse Word}
                 Word|{TweetToListOfWord OtherWords}
             end
         end
