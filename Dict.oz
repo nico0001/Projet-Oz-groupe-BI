@@ -1,18 +1,16 @@
 functor
-
-import
-    Browser
-    System
 export
     dicfreq:DicFreq
     finaldictionary:FinalDictionary
+    findnext:FindNext
+
 define
-    BrowserObject = {New Browser.'class' init}
-    {BrowserObject option(buffer size:1000)} %Changer la taille du buffer
-    {BrowserObject option(representation strings:true)} %Affiche les strings
-    Browse = proc {$ X} {BrowserObject browse(X)} end
     StA = String.toAtom
-%%% Création dictionary
+
+    % @pre: - D: a empty dictionary
+    %       - Words: Stream of tuples of a word(s) and his/their next one
+    % @post: D has all the words as keys and has a dictionary (DNext) for each word as
+    %        value containing as keys next possible words with their frequency as value.
     proc {DicFreq D Words}
         case Words
         of H|T then DNext in
@@ -23,17 +21,18 @@ define
                 if {Dictionary.isEmpty DNext} then %Si le mot n'est pas encore dans le dictionnaire
                     {Dictionary.put D {StA H.1} DNext}
                     {Dictionary.put DNext {StA H.2} 1}
-                    %{Browse {Dictionary.keys D}}
                 else
                     {Dictionary.put DNext {StA H.2} {Dictionary.condGet DNext {StA H.2} 0}+1}
-                    %{Browser.browse {Dictionary.keys D}}
-                    %{Browse {Dictionary.entries {Dictionary.condGet D {StA "a"} {Dictionary.new}}}}
                 end
                 {DicFreq D T}
             end
         end
     end
 
+    %Organize the call of FindMaxFreq by word
+    % @pre: -D: the dictionary of dictionaries of frequency
+    %       -LstWord: List of all the words
+    % @post: D has now all the words as keys and his/their next one as value
     proc {FinalDictionary D LstWord}
         case LstWord
         of nil then skip
@@ -45,6 +44,13 @@ define
         end
     end
 
+    %Finds the word with the biggest frequency
+    % @pre: -D: the dictionary of dictionaries of frequency
+    %       -Word: the word(s) for whom we are finding his/their best next one
+    %       -DNext: the dictionary of frequency
+    %       -NextWords: Possible words to treat
+    %       -Max: Tuple Word#frequency initialized to none#0
+    % @post: D has now the best next word as value for the key Word
     proc {FindMaxFreq D Word DNext NextWords Max}
         case NextWords
         of nil then {Dictionary.put D Word {Cell.access Max}.1}
@@ -55,6 +61,15 @@ define
             end
         {FindMaxFreq D Word DNext T Max}
         end
+    end
+
+    %Return the next word depending on the 2 last words
+    % @pre: -W1: the last word written
+    %       -W2: the one before the last
+    % @post: Return the next word or "Aucune proposition" 
+    fun{FindNext W1 W2}
+        {Dictionary.condGet D2 {StA {VStS W2#W1}}
+        {Dictionary.condGet D1 {StA W1} {StA "Aucune proposition"}}}
     end
 
 end

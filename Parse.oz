@@ -1,20 +1,13 @@
 functor
-import 
-    System
-    Browser
 export
-tweetstoword:TweetsToWord
-wordlink:WordLink
-wordlink2:WordLink2
+    tweetstoword:TweetsToWord
+    wordlink:WordLink
+    
 define
-    BrowserObject = {New Browser.'class' init}
-    {BrowserObject option(buffer size:1000)} %Changer la taille du buffer
-    {BrowserObject option(representation strings:true)} %Affiche les strings
-    Browse = proc {$ X} {BrowserObject browse(X)} end
 
-    %Fetches all the words off the tweets in a stream format
-    % @pre: - SFileLines: a stream of tweets in a string format
-    % @post: Returns a stream containing the words 
+    %Fetches all the words off all tweets
+    % @pre: - FileLines: a stream of tweets in a string format
+    % @post: Returns a stream of streams containing the words of one tweet
     fun {TweetsToWord FileLines}
         case FileLines
         of nil then nil
@@ -23,9 +16,9 @@ define
         end
     end
 
-    %Fetches all the words in a string in a stream format
-    % @pre: - Words: a tweet in a string format
-    % @post: Returns a stream containing the words of the tweet
+    %Fetches all the words of one tweet
+    % @pre: - Words: a tweet/line in a string format
+    % @post: Returns a stream containing the words of the tweet/line
     fun {TweetToListOfWord Words}
         if Words == nil then 
             nil
@@ -39,56 +32,37 @@ define
         end
     end
 
-    %Fetches all the words and his next word
-    % @pre: - StreamWords: a stream of stream of words
-    %       - P : Key port access to the stream
-    % @post: Send to a stream tuples of the word and his next word
-    proc {WordLink StreamWords P}
+    %Organize the call of WordLinkTweet by tweet
+    % @pre: - StreamWords: a stream of stream of words of one tweet
+    %       - P1 : Key port access to a stream S1
+    %       - P2 : Key port access to a stream S2
+    % @post: Send to the streams S1 and S2 tuples of the word and his next word for all tweets
+    proc {WordLink StreamWords P1 P2}
         case StreamWords
         of nil then skip
         [] H|T then
-            {WordLinkTweet H P}
-            {WordLink T P}
+            {WordLinkTweet H P1 P2}
+            {WordLink T P1 P2}
         end
     end
 
-    %Fetches all the words and his next word
-    % @pre: - Words: a stream of words
-    %       - P : Key port access to the stream
-    % @post: Send to a stream tuples of the word and his next word
-    proc {WordLinkTweet Words P}
+    %Sends to a stream the words and his next word of one tweet
+    % @pre: - Words: a stream of words of one tweet
+    %       - P1 : Key port access to a stream S1
+    %       - P2 : Key port access to a stream S2
+    % @post: Send to the streams S1 and S2 tuples of the word(s) and his next word for one tweet
+    proc {WordLinkTweet Words P1 P2}
         case Words
         of H|T then
             if T==nil then
                 skip
             else 
-                {Port.send P H#T.1}
-                {WordLinkTweet T P}
-            end
-        end
-    end
-
-    proc {WordLink2 StreamWords P}
-        case StreamWords
-        of nil then skip
-        [] H|T then
-            {WordLinkTweet2 H P}
-            {WordLink2 T P}
-        end
-    end
-
-    proc {WordLinkTweet2 Words P}
-        case Words
-        of H|T then
-            if T==nil then
-                skip
-            else if T.2==nil then
-                    skip
-                else
-                    {Browse {VirtualString.toString H#T.1}#T.2.1}
-                    {Port.send P {VirtualString.toString H#T.1}#T.2.1}
-                    {WordLinkTweet2 T P}
+                {Port.send P1 H#T.1} %1-gram
+                if T.2==nil then skip
+                else 
+                    {Port.send P2 {VirtualString.toString H#T.1}#T.2.1} %2-gram
                 end
+                {WordLinkTweet T P1 P2}
             end
         end
     end
