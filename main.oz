@@ -22,7 +22,6 @@ define
     WordLink = Parse.wordlink
     DicFreq = Dict.dicfreq
     FinalDictionary = Dict.finaldictionary
-    FindNext = Dict.findnext
     StA = String.toAtom
     VStS = VirtualString.toString
 

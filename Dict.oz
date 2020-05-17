@@ -2,7 +2,6 @@ functor
 export
     dicfreq:DicFreq
     finaldictionary:FinalDictionary
-    findnext:FindNext
 
 define
     StA = String.toAtom
